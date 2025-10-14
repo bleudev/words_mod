@@ -1,7 +1,22 @@
 {
   "variants": {
-    "": {
+    "color=blue": {
       "model": "words:block/letter_blue"
+    },
+    "color=green": {
+      "model": "words:block/letter_green"
+    },
+    "color=light_blue": {
+      "model": "words:block/letter_light_blue"
+    },
+    "color=purple": {
+      "model": "words:block/letter_purple"
+    },
+    "color=red": {
+      "model": "words:block/letter_red"
+    },
+    "color=yellow": {
+      "model": "words:block/letter_yellow"
     }
   }
 }
