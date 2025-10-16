@@ -2,7 +2,8 @@ package com.bleudev.words
 
 import com.bleudev.words.block.COLOR
 import com.bleudev.words.block.LetterBlockColor
-import com.bleudev.words.custom.ModBlocks
+import com.bleudev.words.block.enitity.LetterBlockEntity
+import com.bleudev.words.custom.ModBlock
 import com.bleudev.words.custom.ModItemGroups
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.api.ModInitializer
@@ -13,7 +14,7 @@ import net.minecraft.server.command.CommandManager
 class Words : ModInitializer {
     override fun onInitialize() {
         // Custom
-        ModBlocks.initialize()
+        ModBlock.initialize()
         ModItemGroups.initialize()
 
         // Events
@@ -23,21 +24,34 @@ class Words : ModInitializer {
                 .then(CommandManager
                     .argument("pos", BlockPosArgumentType.blockPos())
                     .then(CommandManager
-                        .argument("color", StringArgumentType.word())
-                        .suggests { _, bld ->
-                            LetterBlockColor.entries.forEach { c ->
-                                bld.suggest(c.asString())
+                        .literal("color")
+                        .then(CommandManager
+                            .argument("color", StringArgumentType.word())
+                            .suggests { _, bld ->
+                                LetterBlockColor.entries.forEach { c ->
+                                    bld.suggest(c.asString())
+                                }
+                                return@suggests bld.buildFuture()
                             }
-                            return@suggests bld.buildFuture()
-                        }
-                        .executes { ctx ->
-                            val pos = BlockPosArgumentType.getBlockPos(ctx, "pos")
-                            val color = StringArgumentType.getString(ctx, "color")
-                            val world = ctx.source.world
-                            world.setBlockState(pos, world.getBlockState(pos).with(COLOR, LetterBlockColor.valueOf(color.uppercase())))
-                            return@executes 1
-                        }
-                    )))
+                            .executes { ctx ->
+                                val pos = BlockPosArgumentType.getBlockPos(ctx, "pos")
+                                val color = StringArgumentType.getString(ctx, "color")
+                                val world = ctx.source.world
+                                world.setBlockState(pos, world.getBlockState(pos).with(COLOR, LetterBlockColor.valueOf(color.uppercase())))
+                                return@executes 1
+                            }))
+                    .then(CommandManager
+                        .literal("letter")
+                        .then(CommandManager
+                            .argument("letter", StringArgumentType.word())
+                            .executes { ctx ->
+                                val pos = BlockPosArgumentType.getBlockPos(ctx, "pos")
+                                (ctx.source.world.getBlockEntity(pos) as? LetterBlockEntity)?.
+                                    setLetter(StringArgumentType.getString(ctx, "letter"))
+                                return@executes 1
+                            })
+                    )
+                ))
         }
     }
 }

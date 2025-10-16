@@ -1,10 +1,22 @@
 package com.bleudev.words.block
 
+import com.bleudev.words.block.enitity.LetterBlockEntity
+import com.bleudev.words.block.enitity.letterBlockEntityTicker
+import com.bleudev.words.custom.ModBlock
+import com.mojang.serialization.MapCodec
 import net.minecraft.block.Block
+import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.BlockState
+import net.minecraft.block.BlockWithEntity
+import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
+import net.minecraft.block.entity.BlockEntityType
+import net.minecraft.screen.Property
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.EnumProperty
 import net.minecraft.util.StringIdentifiable
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 
 enum class LetterBlockColor(name: String) : StringIdentifiable {
     BLUE("blue"),
@@ -23,12 +35,27 @@ enum class LetterBlockColor(name: String) : StringIdentifiable {
 
 val COLOR: EnumProperty<LetterBlockColor> = EnumProperty.of("color", LetterBlockColor::class.java)
 
-class LetterBlock(settings: Settings) : Block(settings) {
+class LetterBlock(settings: Settings) : BlockWithEntity(settings), BlockEntityProvider {
     init {
         this.defaultState = defaultState.with(COLOR, LetterBlockColor.BLUE)
     }
 
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
         builder.add(COLOR)
+    }
+
+    override fun getCodec(): MapCodec<out BlockWithEntity> {
+        return createCodec(::LetterBlock)
+    }
+
+    override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
+        return LetterBlockEntity(pos, state)
+    }
+
+    override fun <T : BlockEntity> getTicker(world: World,
+        state: BlockState,
+        type: BlockEntityType<T>
+    ): BlockEntityTicker<T>? {
+        return validateTicker(type, ModBlock.Entity.LETTER_ENTITY, ::letterBlockEntityTicker)
     }
 }
