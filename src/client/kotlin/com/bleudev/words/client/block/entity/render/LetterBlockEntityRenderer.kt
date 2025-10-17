@@ -1,5 +1,6 @@
 package com.bleudev.words.client.block.entity.render
 
+import com.bleudev.words.block.SHOULD_RENDER_UP
 import com.bleudev.words.block.enitity.LetterBlockEntity
 import com.bleudev.words.client.block.entity.render.state.LetterBlockEntityRenderState
 import net.minecraft.client.font.TextRenderer
@@ -59,7 +60,6 @@ class LetterBlockEntityRenderer(private val context: BlockEntityRendererFactory.
 
         val text = state.letter.uppercase()[0].toString()
         val width = context.textRenderer.getWidth(text).toFloat()
-        println(state.lightmapCoordinates)
         queue.submitText(matrices, -width / 2  + 0.5f, -3.5f, Text.literal(text).asOrderedText(), false,
             TextRenderer.TextLayerType.POLYGON_OFFSET, 15728880,
             0xffffffff.toInt(), 0, 0)
@@ -79,8 +79,10 @@ class LetterBlockEntityRenderer(private val context: BlockEntityRendererFactory.
         drawTextWithDirection(matrices, queue, state, Direction.SOUTH)
         drawTextWithDirection(matrices, queue, state, Direction.EAST)
         drawTextWithDirection(matrices, queue, state, Direction.WEST)
-        drawTextWithDirection(matrices, queue, state, Direction.UP)
-        drawTextWithDirection(matrices, queue, state, Direction.DOWN)
+        if (state.blockState.get(SHOULD_RENDER_UP)) {
+            drawTextWithDirection(matrices, queue, state, Direction.UP)
+            drawTextWithDirection(matrices, queue, state, Direction.DOWN)
+        }
 
         matrices.pop()
     }

@@ -2,12 +2,18 @@ package com.bleudev.words
 
 import com.bleudev.words.block.COLOR
 import com.bleudev.words.block.LetterBlockColor
+import com.bleudev.words.block.SHOULD_RENDER_UP
 import com.bleudev.words.block.enitity.LetterBlockEntity
 import com.bleudev.words.custom.ModBlock
 import com.bleudev.words.custom.ModItemGroups
+import com.bleudev.words.custom.data.GameData
+import com.bleudev.words.custom.data.state.PlayersBlockPosesDataState
+import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.server.command.CommandManager
 
@@ -21,6 +27,22 @@ class Words : ModInitializer {
         CommandRegistrationCallback.EVENT.register { d, _, _ ->
             d.register(CommandManager
                 .literal("words")
+                .then(CommandManager
+                    .literal("game")
+                    .then(CommandManager
+                        .literal("start")
+                        .executes { ctx ->
+                            return@executes 1
+                        }))
+                .then(CommandManager
+                    .literal("player_pos")
+                    .then(CommandManager
+                        .argument("pos", BlockPosArgumentType.blockPos())
+                        .executes { ctx ->
+                            val pos = BlockPosArgumentType.getBlockPos(ctx, "pos")
+                            ctx.source.world.getData(PlayersBlockPosesDataState).setPlayersBlockPoses(pos)
+                            return@executes 1
+                        }))
                 .then(CommandManager
                     .argument("pos", BlockPosArgumentType.blockPos())
                     .then(CommandManager
@@ -49,9 +71,35 @@ class Words : ModInitializer {
                                 (ctx.source.world.getBlockEntity(pos) as? LetterBlockEntity)?.
                                     setLetter(StringArgumentType.getString(ctx, "letter"))
                                 return@executes 1
-                            })
-                    )
+                            }))
+                    .then(CommandManager
+                        .literal("should_render_up")
+                        .then(CommandManager
+                            .argument("should_render_up", BoolArgumentType.bool())
+                            .executes { ctx ->
+                                val pos = BlockPosArgumentType.getBlockPos(ctx, "pos")
+                                val should_render_up = BoolArgumentType.getBool(ctx, "should_render_up")
+                                val world = ctx.source.world
+                                world.setBlockState(pos, world.getBlockState(pos).with(SHOULD_RENDER_UP, should_render_up))
+                                return@executes 1
+                            }))
                 ))
+        }
+        ServerTickEvents.END_SERVER_TICK.register { server ->
+            for (world in server.worlds) {
+                val data = GameData.from(world)
+                if (data.started()) println("${world.registryKey.value.path} started")
+            }
+//            println(server.overworld.getWordsState().players_block_poses)
+        }
+        ServerMessageEvents.CHAT_MESSAGE.register { message, sender, params ->
+            val mes = message.content.literalString
+            println("message: $mes")
+        }
+        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register { message, sender, params ->
+            val mes = message.content.literalString
+            println("allow? $mes")
+            return@register !mes.equals("hello")
         }
     }
 }
