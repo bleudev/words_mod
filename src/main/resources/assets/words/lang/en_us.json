@@ -3,5 +3,12 @@
   "block.words.letter": "Letter block",
   "block.words.direction": "Direction block",
   "item.words.letter": "Letter block",
-  "item.words.direction": "Direction block"
+  "item.words.direction": "Direction block",
+
+  "words.message.text.answer.success": "%1$s answered",
+
+  "commands.words.game.start.success": "Game was started",
+  "commands.words.game.start.failed": "Game was already started before",
+  "commands.words.game.stop.success": "Game was stopped",
+  "commands.words.game.stop.failed": "Game was already stopped before"
 }

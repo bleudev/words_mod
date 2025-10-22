@@ -11,10 +11,12 @@ import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.server.command.CommandManager
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 
 class Words : ModInitializer {
     override fun onInitialize() {
@@ -31,9 +33,23 @@ class Words : ModInitializer {
                     .then(CommandManager
                         .literal("start")
                         .executes { ctx ->
+                            var feedback: Text = Text.translatable("commands.words.game.start.failed")
+                            if (GameData.from(ctx.source.world).start())
+                                feedback = Text.translatable("commands.words.game.start.success")
+                            ctx.source.sendFeedback({feedback}, false)
+                            return@executes 1
+                        })
+                    .then(CommandManager
+                        .literal("stop")
+                        .executes { ctx ->
+                            var feedback: Text = Text.translatable("commands.words.game.stop.failed")
+                            if (GameData.from(ctx.source.world).stop())
+                                feedback = Text.translatable("commands.words.game.stop.success")
+                            ctx.source.sendFeedback({feedback}, false)
                             return@executes 1
                         }))
                 .then(CommandManager
+                    // Dev command
                     .literal("reset")
                     .executes { ctx ->
                         GameData.from(ctx.source.world).full_reset()
@@ -81,19 +97,30 @@ class Words : ModInitializer {
                             }))
                 ))
         }
-        ServerTickEvents.END_SERVER_TICK.register { server ->
-            for (world in server.worlds)
-                println(GameData.from(world))
-        }
-        ServerMessageEvents.CHAT_MESSAGE.register { message, sender, params ->
+//        ServerTickEvents.END_SERVER_TICK.register { server ->
+//            for (world in server.worlds)
+//                println(GameData.from(world))
+//        }
+        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register { message, sender, _ ->
             val mes = message.content.literalString
-            println("message: $mes")
+
+            if (GameData.from(sender.entityWorld).started()) {
+                answer_player(sender, mes)
+                return@register false
+            }
+            return@register true
         }
-        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register { message, sender, params ->
-            val mes = message.content.literalString
-            println("allow? $mes")
-            return@register !mes.equals("hello")
+    }
+
+    fun answer_player(player: ServerPlayerEntity, message: String?) {
+        val server = player.entityWorld.server
+
+        server.playerManager.playerList.forEach {
+            it.sendMessage(Text.translatable("words.message.text.answer.success", player.name.literalString)
+                .formatted(Formatting.YELLOW))
         }
+
+        println("${player.name.literalString} $message")
     }
 }
 

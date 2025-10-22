@@ -24,6 +24,11 @@ class GameDataImpl(private val world: ServerWorld) : GameData {
     }
 
     override fun started(): Boolean = world.getData(WordsDataState).started
+    override fun set_started(started: Boolean): Boolean {
+        val old_started = started()
+        world.getData(WordsDataState).started = started
+        return old_started != started
+    }
 
     override fun add_direction_block(pos: BlockPos, placer: String?): Boolean {
         return world.getData(WordsDataState).addPlayerData(get_player_for_direction_block(placer) ?: return false, pos)
