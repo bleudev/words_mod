@@ -1,11 +1,10 @@
-package com.bleudev.words.custom.data
+package com.bleudev.words.custom.data.state
 
-import com.mojang.serialization.Codec
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.world.PersistentState
 import net.minecraft.world.PersistentStateType
 
-interface DataState<T : PersistentState> {
+interface DataStateCompanion<T : PersistentState> {
     fun type(): PersistentStateType<T>
 
     fun get(world: ServerWorld): T {

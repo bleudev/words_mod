@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "words:block/letter_green"
+    "all": "words:block/letter/green"
   }
 }

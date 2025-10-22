@@ -14,6 +14,7 @@ object ModItemGroups {
     fun initialize() {
         ItemGroupEvents.modifyEntriesEvent(WORDS_ITEM_GROUP).register { e ->
             e.add(ModBlock.LETTER)
+            e.add(ModBlock.DIRECTION)
         }
     }
 }

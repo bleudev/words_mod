@@ -1,13 +1,12 @@
 package com.bleudev.words
 
 import com.bleudev.words.block.COLOR
-import com.bleudev.words.block.LetterBlockColor
 import com.bleudev.words.block.SHOULD_RENDER_UP
+import com.bleudev.words.block.WordsPlayerColor
 import com.bleudev.words.block.enitity.LetterBlockEntity
 import com.bleudev.words.custom.ModBlock
 import com.bleudev.words.custom.ModItemGroups
 import com.bleudev.words.custom.data.GameData
-import com.bleudev.words.custom.data.state.PlayersBlockPosesDataState
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.api.ModInitializer
@@ -35,14 +34,11 @@ class Words : ModInitializer {
                             return@executes 1
                         }))
                 .then(CommandManager
-                    .literal("player_pos")
-                    .then(CommandManager
-                        .argument("pos", BlockPosArgumentType.blockPos())
-                        .executes { ctx ->
-                            val pos = BlockPosArgumentType.getBlockPos(ctx, "pos")
-                            ctx.source.world.getData(PlayersBlockPosesDataState).setPlayersBlockPoses(pos)
-                            return@executes 1
-                        }))
+                    .literal("reset")
+                    .executes { ctx ->
+                        GameData.from(ctx.source.world).full_reset()
+                        return@executes 1
+                    })
                 .then(CommandManager
                     .argument("pos", BlockPosArgumentType.blockPos())
                     .then(CommandManager
@@ -50,7 +46,7 @@ class Words : ModInitializer {
                         .then(CommandManager
                             .argument("color", StringArgumentType.word())
                             .suggests { _, bld ->
-                                LetterBlockColor.entries.forEach { c ->
+                                WordsPlayerColor.entries.forEach { c ->
                                     bld.suggest(c.asString())
                                 }
                                 return@suggests bld.buildFuture()
@@ -59,7 +55,7 @@ class Words : ModInitializer {
                                 val pos = BlockPosArgumentType.getBlockPos(ctx, "pos")
                                 val color = StringArgumentType.getString(ctx, "color")
                                 val world = ctx.source.world
-                                world.setBlockState(pos, world.getBlockState(pos).with(COLOR, LetterBlockColor.valueOf(color.uppercase())))
+                                world.setBlockState(pos, world.getBlockState(pos).with(COLOR, WordsPlayerColor.valueOf(color.uppercase())))
                                 return@executes 1
                             }))
                     .then(CommandManager
@@ -86,11 +82,8 @@ class Words : ModInitializer {
                 ))
         }
         ServerTickEvents.END_SERVER_TICK.register { server ->
-            for (world in server.worlds) {
-                val data = GameData.from(world)
-                if (data.started()) println("${world.registryKey.value.path} started")
-            }
-//            println(server.overworld.getWordsState().players_block_poses)
+            for (world in server.worlds)
+                println(GameData.from(world))
         }
         ServerMessageEvents.CHAT_MESSAGE.register { message, sender, params ->
             val mes = message.content.literalString

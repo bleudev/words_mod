@@ -1,0 +1,117 @@
+{
+  "variants": {
+    "facing=north,color=blue": {
+      "model": "words:block/direction/blue",
+      "x": 90
+    },
+    "facing=south,color=blue": {
+      "model": "words:block/direction/blue",
+      "x": -90
+    },
+    "facing=west,color=blue": {
+      "model": "words:block/direction/blue",
+      "x": -90,
+      "y": 90
+    },
+    "facing=east,color=blue": {
+      "model": "words:block/direction/blue",
+      "x": 90,
+      "y": 90
+    },
+
+    "facing=north,color=green": {
+      "model": "words:block/direction/green",
+      "x": 90
+    },
+    "facing=south,color=green": {
+      "model": "words:block/direction/green",
+      "x": -90
+    },
+    "facing=west,color=green": {
+      "model": "words:block/direction/green",
+      "x": -90,
+      "y": 90
+    },
+    "facing=east,color=green": {
+      "model": "words:block/direction/green",
+      "x": 90,
+      "y": 90
+    },
+
+    "facing=north,color=light_blue": {
+      "model": "words:block/direction/light_blue",
+      "x": 90
+    },
+    "facing=south,color=light_blue": {
+      "model": "words:block/direction/light_blue",
+      "x": -90
+    },
+    "facing=west,color=light_blue": {
+      "model": "words:block/direction/light_blue",
+      "x": -90,
+      "y": 90
+    },
+    "facing=east,color=light_blue": {
+      "model": "words:block/direction/light_blue",
+      "x": 90,
+      "y": 90
+    },
+
+    "facing=north,color=purple": {
+      "model": "words:block/direction/purple",
+      "x": 90
+    },
+    "facing=south,color=purple": {
+      "model": "words:block/direction/purple",
+      "x": -90
+    },
+    "facing=west,color=purple": {
+      "model": "words:block/direction/purple",
+      "x": -90,
+      "y": 90
+    },
+    "facing=east,color=purple": {
+      "model": "words:block/direction/purple",
+      "x": 90,
+      "y": 90
+    },
+
+    "facing=north,color=red": {
+      "model": "words:block/direction/red",
+      "x": 90
+    },
+    "facing=south,color=red": {
+      "model": "words:block/direction/red",
+      "x": -90
+    },
+    "facing=west,color=red": {
+      "model": "words:block/direction/red",
+      "x": -90,
+      "y": 90
+    },
+    "facing=east,color=red": {
+      "model": "words:block/direction/red",
+      "x": 90,
+      "y": 90
+    },
+
+    "facing=north,color=yellow": {
+      "model": "words:block/direction/yellow",
+      "x": 90
+    },
+    "facing=south,color=yellow": {
+      "model": "words:block/direction/yellow",
+      "x": -90
+    },
+    "facing=west,color=yellow": {
+      "model": "words:block/direction/yellow",
+      "x": -90,
+      "y": 90
+    },
+    "facing=east,color=yellow": {
+      "model": "words:block/direction/yellow",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

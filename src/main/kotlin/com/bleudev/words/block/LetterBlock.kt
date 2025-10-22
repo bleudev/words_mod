@@ -12,36 +12,17 @@ import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityTicker
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.item.ItemPlacementContext
-import net.minecraft.screen.Property
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.BooleanProperty
-import net.minecraft.state.property.EnumProperty
-import net.minecraft.util.StringIdentifiable
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
-enum class LetterBlockColor(name: String) : StringIdentifiable {
-    BLUE("blue"),
-    GREEN("green"),
-    LIGHT_BLUE("light_blue"),
-    PURPLE("purple"),
-    RED("red"),
-    YELLOW("yellow");
-
-    private val c: String = name
-
-    override fun asString(): String {
-        return c
-    }
-}
-
-val COLOR: EnumProperty<LetterBlockColor> = EnumProperty.of("color", LetterBlockColor::class.java)
-val SHOULD_RENDER_UP = BooleanProperty.of("should_render_up")
+val SHOULD_RENDER_UP: BooleanProperty = BooleanProperty.of("should_render_up")
 
 class LetterBlock(settings: Settings) : BlockWithEntity(settings), BlockEntityProvider {
     init {
         this.defaultState = defaultState
-            .with(COLOR, LetterBlockColor.BLUE)
+            .with(COLOR, WordsPlayerColor.BLUE)
             .with(SHOULD_RENDER_UP, false)
     }
 

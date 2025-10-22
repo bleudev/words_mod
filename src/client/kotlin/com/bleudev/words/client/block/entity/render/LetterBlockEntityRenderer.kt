@@ -12,12 +12,10 @@ import net.minecraft.client.render.state.CameraRenderState
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.Text
 import net.minecraft.util.math.Direction
-import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.math.Vec3d
 import org.joml.Math.PI_OVER_2_f
 import org.joml.Math.PI_f
 import org.joml.Quaternionf
-import kotlin.math.PI
 
 class LetterBlockEntityRenderer(private val context: BlockEntityRendererFactory.Context) : BlockEntityRenderer<LetterBlockEntity, LetterBlockEntityRenderState> {
     override fun createRenderState(): LetterBlockEntityRenderState {

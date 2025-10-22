@@ -1,22 +1,22 @@
 {
   "variants": {
     "color=blue": {
-      "model": "words:block/letter_blue"
+      "model": "words:block/letter/blue"
     },
     "color=green": {
-      "model": "words:block/letter_green"
+      "model": "words:block/letter/green"
     },
     "color=light_blue": {
-      "model": "words:block/letter_light_blue"
+      "model": "words:block/letter/light_blue"
     },
     "color=purple": {
-      "model": "words:block/letter_purple"
+      "model": "words:block/letter/purple"
     },
     "color=red": {
-      "model": "words:block/letter_red"
+      "model": "words:block/letter/red"
     },
     "color=yellow": {
-      "model": "words:block/letter_yellow"
+      "model": "words:block/letter/yellow"
     }
   }
 }

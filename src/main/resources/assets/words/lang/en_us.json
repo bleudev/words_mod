@@ -1,5 +1,7 @@
 {
   "itemgroup.words.words": "Words",
   "block.words.letter": "Letter block",
-  "item.words.letter": "Letter block"
+  "block.words.direction": "Direction block",
+  "item.words.letter": "Letter block",
+  "item.words.direction": "Direction block"
 }

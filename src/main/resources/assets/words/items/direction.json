@@ -1,0 +1,8 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "words:block/direction/blue",
+    "x": 90,
+    "y": 90
+  }
+}
