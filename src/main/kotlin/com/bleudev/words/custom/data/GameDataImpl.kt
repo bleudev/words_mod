@@ -37,6 +37,8 @@ class GameDataImpl(private val world: ServerWorld) : GameData {
     override fun remove_direction_block(pos: BlockPos): Boolean = world
         .getData(WordsDataState).removePlayerData(directionBlockPos = pos) != null
 
+    override fun round_info(): RoundInfo = RoundInfo.from(world)
+
     override fun full_reset() {
         world.getData(WordsDataState).reset()
     }

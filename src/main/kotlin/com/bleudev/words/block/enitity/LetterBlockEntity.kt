@@ -13,6 +13,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.storage.ReadView
 import net.minecraft.storage.WriteView
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
 import net.minecraft.world.World
 
 
@@ -21,7 +22,8 @@ fun letterBlockEntityTicker(world: World, pos: BlockPos, state: BlockState, bloc
 }
 
 class LetterBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ModBlock.Entity.LETTER_ENTITY, pos, state) {
-    private var letter: String = "a"
+    private var letter: Char = 'a'
+    private var direction: Direction? = null
 
     private fun sync() {
         if (world == null || world!!.isClient) return
@@ -31,9 +33,7 @@ class LetterBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ModBlock
         }
     }
 
-    fun setLetter(v: String) {
-        if (v.length != 1) throw RuntimeException("LetterBlockEntity: Letter string must have length = 1")
-
+    fun setLetter(v: Char) {
         if (v != letter) {
             letter = v
             markDirty()
@@ -43,17 +43,25 @@ class LetterBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ModBlock
             }
         }
     }
-    fun getLetter(): String {
-        return letter
+
+    fun setLetter(v: String) {
+        if (v.length != 1) throw RuntimeException("LetterBlockEntity: Letter string must have length = 1")
+        setLetter(v[0])
     }
+    fun getLetter(): Char = this.letter
+
+    fun setDirection(direction: Direction?) { this.direction = direction }
+    fun getDirection(): Direction? = this.direction
 
     override fun writeData(view: WriteView) {
-        view.putString("letter", letter)
+        view.putString("letter", letter.toString())
+        view.putInt("direction", direction?.index ?: -1)
         super.writeData(view)
     }
     override fun readData(view: ReadView) {
         super.readData(view)
-        letter = view.getString("letter", "a")
+        letter = view.getString("letter", "a")[0]
+        direction = view.getInt("direction", -1).let { if (it == -1) null else Direction.byIndex(it) }
     }
     override fun toUpdatePacket(): Packet<ClientPlayPacketListener>? {
         return BlockEntityUpdateS2CPacket.create(this)

@@ -16,11 +16,11 @@ interface GameData {
     fun add_direction_block(pos: BlockPos, placer: String?): Boolean
     fun remove_direction_block(pos: BlockPos): Boolean
 
+    fun round_info(): RoundInfo
+
     fun full_reset()
 
     companion object {
-        fun from(world: ServerWorld): GameData {
-            return GameDataImpl(world)
-        }
+        fun from(world: ServerWorld): GameData = GameDataImpl(world)
     }
 }

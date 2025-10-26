@@ -11,6 +11,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.server.command.CommandManager
@@ -46,6 +47,15 @@ class Words : ModInitializer {
                             if (GameData.from(ctx.source.world).stop())
                                 feedback = Text.translatable("commands.words.game.stop.success")
                             ctx.source.sendFeedback({feedback}, false)
+                            return@executes 1
+                        }))
+                .then(CommandManager
+                    .literal("test")
+                    .then(CommandManager
+                        .argument("word", StringArgumentType.word())
+                        .executes { ctx ->
+                            val word = StringArgumentType.getString(ctx, "word")
+                            ctx.source.player?.let { Game.get(ctx.source.world).causeAnswerEvent(it, word) }
                             return@executes 1
                         }))
                 .then(CommandManager
@@ -97,10 +107,10 @@ class Words : ModInitializer {
                             }))
                 ))
         }
-//        ServerTickEvents.END_SERVER_TICK.register { server ->
-//            for (world in server.worlds)
-//                println(GameData.from(world))
-//        }
+        ServerTickEvents.END_SERVER_TICK.register { server ->
+            server.worlds.forEach { Game.get(it).tick() }
+            println(GameData.from(server.overworld))
+        }
         ServerMessageEvents.ALLOW_CHAT_MESSAGE.register { message, sender, _ ->
             val mes = message.content.literalString
 
@@ -119,6 +129,7 @@ class Words : ModInitializer {
             it.sendMessage(Text.translatable("words.message.text.answer.success", player.name.literalString)
                 .formatted(Formatting.YELLOW))
         }
+        Game.get(player.entityWorld).causeAnswerEvent(player, message ?: "")
 
         println("${player.name.literalString} $message")
     }

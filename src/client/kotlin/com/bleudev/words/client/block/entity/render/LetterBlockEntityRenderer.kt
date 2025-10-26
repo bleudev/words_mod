@@ -30,6 +30,7 @@ class LetterBlockEntityRenderer(private val context: BlockEntityRendererFactory.
         crumblingOverlay: ModelCommandRenderer.CrumblingOverlayCommand?
     ) {
         state.letter = blockEntity.getLetter()
+        state.direction = blockEntity.getDirection()
         super.updateRenderState(blockEntity, state, tickProgress, cameraPos, crumblingOverlay)
     }
 
@@ -39,7 +40,7 @@ class LetterBlockEntityRenderer(private val context: BlockEntityRendererFactory.
         state: LetterBlockEntityRenderState,
         direction: Direction
     ) {
-        if (state.letter.isEmpty()) return
+        if (state.direction in listOf(direction, direction.opposite)) return
 
         matrices.push()
         matrices.translate(Vec3d(direction.vector).multiply(.5))
@@ -56,7 +57,7 @@ class LetterBlockEntityRenderer(private val context: BlockEntityRendererFactory.
         matrices.multiply(Quaternionf().rotationX(PI_f))
         matrices.multiply(q)
 
-        val text = state.letter.uppercase()[0].toString()
+        val text = state.letter.uppercase()
         val width = context.textRenderer.getWidth(text).toFloat()
         queue.submitText(matrices, -width / 2  + 0.5f, -3.5f, Text.literal(text).asOrderedText(), false,
             TextRenderer.TextLayerType.POLYGON_OFFSET, 15728880,
