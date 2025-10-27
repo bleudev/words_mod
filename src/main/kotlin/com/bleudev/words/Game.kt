@@ -56,22 +56,29 @@ class Game {
 
     // Public
     fun causeAnswerEvent(player: ServerPlayerEntity, answer: String) {
-        answers[player] = answer
+        data.round_info.addAnswer(player, answer)
     }
 
     fun tick() {
-        answers.forEach { if (it.value.isEmpty()) answers.remove(it.key) }
+        data.round_info.answers().forEach {
+            if (it.value?.isEmpty() ?: false)
+                data.round_info.setAnswer(it.key, null)
+        }
+        world.players.forEach { player ->
+            if (player.name.literalString !in data.round_info.answers().keys.map { it.name.literalString })
+                data.round_info.setAnswer(player, null)
+        }
 
-        if (answers.isNotEmpty()) {
+        if (data.round_info.is_all_answered()) {
             if (answer_tick % ANSWER_LETTER_TICKS == 0) {
                 val playersData = data.players_map_data()
-                answers.forEach { (player, answer) ->
-                    if (answer.isEmpty()) return@forEach
+                data.round_info.answers().forEach { (player, answer) ->
+                    if (answer?.isEmpty() ?: true) return@forEach
                     playersData[player.name.literalString]?.let {
                         val direction = it.second
                         val pos = findFirstNonLetterBlock(it.first.add(0, 1, 0), direction)
                         placeAnswerLetter(pos, direction, answer[0], answer_tick == 0)
-                        answers[player] = answer.substring(1)
+                        data.round_info.setAnswer(player, answer.substring(1))
                     }
                 }
             }
@@ -82,7 +89,6 @@ class Game {
     companion object {
         const val ANSWER_LETTER_TICKS = 5
         var answer_tick: Int = 0
-        var answers: HashMap<ServerPlayerEntity, String> = HashMap()
 
         fun get(world: ServerWorld): Game = Game(world)
     }

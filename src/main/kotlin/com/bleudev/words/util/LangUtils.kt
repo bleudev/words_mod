@@ -2,22 +2,10 @@ package com.bleudev.words.util
 
 import com.bleudev.words.custom.data.datafixers.WPair
 
-// for's
-fun <T> Collection<T>.forEachIndex(action: (index: Int) -> Unit) {
-    if (!this.isEmpty()) for (i in 0..<this.size) action(i)
-}
-
-fun <T> List<T>.forEachEntry(action: (index: Int, value: T) -> Unit) {
-    this.forEachIndex { action(it, this[it]) }
-}
-fun <T> Collection<T>.forEachEntry(action: (index: Int, value: T) -> Unit) {
-    this.toList().forEachEntry(action)
-}
-
 // Generators
 fun <F, S> Collection<F>.toPairsWith(seconds: List<S>, ignoreAssert: Boolean = false): List<WPair<F, S>> {
     if (!ignoreAssert) assert(this.size == seconds.size)
-    return ArrayList<WPair<F, S>>().apply { this@toPairsWith.forEachEntry { i, v ->
+    return ArrayList<WPair<F, S>>().apply { this@toPairsWith.forEachIndexed { i, v ->
         this@apply.add(WPair(v, seconds[i]))
     } }
 }

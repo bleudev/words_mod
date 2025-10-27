@@ -5,12 +5,13 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 
 open class RoundData(var tick: Int, private var answers: ArrayList<WPair<String, String?>>) {
+    fun getAnswers(): List<WPair<String, String?>> = answers
     fun addAnswer(player_name: String, answer: String? = null): Boolean = answers.add(WPair(player_name, answer))
-    fun resetAnswer(player_name: String): Boolean {
+    fun setAnswer(player_name: String, answer: String?): Boolean {
         var updated = false
         answers = ArrayList(answers.map { if (it.first == player_name) {
             updated = true
-            return@map WPair(it.first, null)
+            return@map WPair(it.first, answer)
         } else return@map it })
         return updated
     }

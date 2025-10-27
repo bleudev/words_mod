@@ -1,6 +1,7 @@
 package com.bleudev.words.custom.data
 
 import com.bleudev.words.custom.data.datafixers.WPair
+import com.bleudev.words.custom.data.impl.GameDataImpl
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
@@ -16,7 +17,7 @@ interface GameData {
     fun add_direction_block(pos: BlockPos, placer: String?): Boolean
     fun remove_direction_block(pos: BlockPos): Boolean
 
-    fun round_info(): RoundInfo
+    val round_info: RoundInfo
 
     fun full_reset()
 
